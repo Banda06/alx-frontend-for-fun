@@ -14,16 +14,28 @@ Requirements:
 
 import sys
 import os
+import re
 
 def markdown_to_html(markdown_text):
     """
-    Converts Markdown text to HTML. Basic implementation for headers, bold, and italics.
+    Converts Markdown text to HTML.
+    
+    Supports:
+    - Heading levels 1 to 6
+    - Bold and italic formatting
     """
-    import re
     html = markdown_text
-    html = re.sub(r'^# (.+)$', r'<h1>\1</h1>', html, flags=re.MULTILINE)
+
+    # Parse heading levels from 1 to 6
+    for i in range(6, 0, -1):  # Start from level 6 to level 1
+        pattern = r'^' + ('#' * i) + r' (.+)$'
+        replacement = f'<h{i}>\\1</h{i}>'
+        html = re.sub(pattern, replacement, html, flags=re.MULTILINE)
+
+    # Convert bold (**) and italic (*) syntax
     html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
     html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', html)
+
     return html
 
 def main():
