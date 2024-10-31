@@ -23,7 +23,7 @@ def markdown_to_html(markdown_text):
     Supports:
     - Heading levels 1 to 6
     - Bold and italic formatting
-    - Unordered lists
+    - Unordered and ordered lists
     """
     html = markdown_text
 
@@ -37,28 +37,50 @@ def markdown_to_html(markdown_text):
     html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
     html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', html)
 
-    # Parse unordered lists
+    # Parse unordered and ordered lists
     lines = html.splitlines()
-    inside_list = False
+    inside_ul = False
+    inside_ol = False
     parsed_lines = []
 
     for line in lines:
         # Detect unordered list items starting with * or -
         if re.match(r'^\s*[*-] (.+)$', line):
-            if not inside_list:
+            if not inside_ul:
+                if inside_ol:  # Close any open ordered list
+                    parsed_lines.append('</ol>')
+                    inside_ol = False
                 parsed_lines.append('<ul>')
-                inside_list = True
+                inside_ul = True
             item_content = re.sub(r'^\s*[*-] (.+)$', r'<li>\1</li>', line)
             parsed_lines.append(item_content)
+        
+        # Detect ordered list items starting with a number and period (e.g., "1. ", "2. ")
+        elif re.match(r'^\s*\d+\. (.+)$', line):
+            if not inside_ol:
+                if inside_ul:  # Close any open unordered list
+                    parsed_lines.append('</ul>')
+                    inside_ul = False
+                parsed_lines.append('<ol>')
+                inside_ol = True
+            item_content = re.sub(r'^\s*\d+\. (.+)$', r'<li>\1</li>', line)
+            parsed_lines.append(item_content)
+        
         else:
-            if inside_list:
+            # Close any open lists when a non-list line is encountered
+            if inside_ul:
                 parsed_lines.append('</ul>')
-                inside_list = False
+                inside_ul = False
+            if inside_ol:
+                parsed_lines.append('</ol>')
+                inside_ol = False
             parsed_lines.append(line)
 
-    # Close any open list at the end
-    if inside_list:
+    # Close any open lists at the end of the file
+    if inside_ul:
         parsed_lines.append('</ul>')
+    if inside_ol:
+        parsed_lines.append('</ol>')
 
     html = '\n'.join(parsed_lines)
 
