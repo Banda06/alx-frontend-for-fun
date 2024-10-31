@@ -12,11 +12,13 @@ Here's how it works in a simplified step-by-step approach:
 1. <strong>Read Markdown Content</strong>: We begin by taking the raw Markdown content from the README.md file. This file could contain headers (using `#`), bold/italic text, lists, links, images, code blocks, and more.
 
 2. <strong>Parse Markdown Syntax</strong>: Each Markdown syntax has a corresponding HTML tag. For example:
-   - `# Header` in Markdown becomes `<h1>Header</h1>` in HTML.
-   - `<em>italic</em>` or `_italic_` becomes `<em>italic</em>`.
-   - `<strong>bold</strong>` or `__bold__` becomes `<strong>bold</strong>`.
-   - `- List item` becomes `<ul><li>List item</li></ul>` (for unordered lists).
-   - Links like `[OpenAI](https://www.openai.com)` become `<a href="https://www.openai.com">OpenAI</a>`.
+<ul>
+<li>`# Header` in Markdown becomes `<h1>Header</h1>` in HTML.</li>
+<li>`<em>italic</em>` or `_italic_` becomes `<em>italic</em>`.</li>
+<li>`<strong>bold</strong>` or `__bold__` becomes `<strong>bold</strong>`.</li>
+<li>`- List item` becomes `<ul><li>List item</li></ul>` (for unordered lists).</li>
+<li>Links like `[OpenAI](https://www.openai.com)` become `<a href="https://www.openai.com">OpenAI</a>`.</li>
+</ul>
   
    These mappings are necessary to create rules that can transform Markdown text into HTML.
 

@@ -23,11 +23,12 @@ def markdown_to_html(markdown_text):
     Supports:
     - Heading levels 1 to 6
     - Bold and italic formatting
+    - Unordered lists
     """
     html = markdown_text
 
     # Parse heading levels from 1 to 6
-    for i in range(6, 0, -1):  # Start from level 6 to level 1
+    for i in range(6, 0, -1):
         pattern = r'^' + ('#' * i) + r' (.+)$'
         replacement = f'<h{i}>\\1</h{i}>'
         html = re.sub(pattern, replacement, html, flags=re.MULTILINE)
@@ -35,6 +36,31 @@ def markdown_to_html(markdown_text):
     # Convert bold (**) and italic (*) syntax
     html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', html)
     html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', html)
+
+    # Parse unordered lists
+    lines = html.splitlines()
+    inside_list = False
+    parsed_lines = []
+
+    for line in lines:
+        # Detect unordered list items starting with * or -
+        if re.match(r'^\s*[*-] (.+)$', line):
+            if not inside_list:
+                parsed_lines.append('<ul>')
+                inside_list = True
+            item_content = re.sub(r'^\s*[*-] (.+)$', r'<li>\1</li>', line)
+            parsed_lines.append(item_content)
+        else:
+            if inside_list:
+                parsed_lines.append('</ul>')
+                inside_list = False
+            parsed_lines.append(line)
+
+    # Close any open list at the end
+    if inside_list:
+        parsed_lines.append('</ul>')
+
+    html = '\n'.join(parsed_lines)
 
     return html
 
